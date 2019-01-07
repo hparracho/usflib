@@ -7,18 +7,10 @@
 *.o
 *.obj
 
-# Precompiled Headers
-*.gch
-*.pch
-
 # Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
-
-# Fortran module files
-*.mod
-*.smod
 
 # Compiled Static libraries
 *.lai
@@ -30,3 +22,15 @@
 *.exe
 *.out
 *.app
+*.axf
+*.elf
+*.hex
+*.bin
+
+# Archives
+*.zip
+*.7z
+
+# Ignore everything inside these directories
+/**/.vscode/**
+/**/build/**
