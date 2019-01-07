@@ -145,7 +145,11 @@ TEST_CASE("usf::format_to, benchmark")
             auto start = std::chrono::steady_clock::now();
             for(int i = 0; i < max_iterations; ++i)
             {
+#if (__LONG_MAX__ != __LONG_LONG_MAX__)
                 sprintf(str, "%llu|%llx|%llo", __UINT64_MAX__, __UINT64_MAX__, __UINT64_MAX__);
+#else
+                sprintf(str, "%lu|%lx|%lo", __UINT64_MAX__, __UINT64_MAX__, __UINT64_MAX__);
+#endif
             }
             auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
             std::cout << "std:: " << str << " -> " << ms << "ms\n";
