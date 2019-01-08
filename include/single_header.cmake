@@ -25,7 +25,7 @@ file(APPEND ${usf_release_folder}/usf.hpp "// @brief   usflib single header auto
 file(APPEND ${usf_release_folder}/usf.hpp "// @date    ${date}\n")
 file(APPEND ${usf_release_folder}/usf.hpp "// ----------------------------------------------------------------------------\n")
 file(APPEND ${usf_release_folder}/usf.hpp "//\n")
-file(APPEND ${usf_release_folder}/usf.hpp "// Micro String Formatter ${USF_VERSION} - https://github.com/hparracho/usflib\n")
+file(APPEND ${usf_release_folder}/usf.hpp "// μSF - Micro String Format ${USF_VERSION} - https://github.com/hparracho/usflib\n")
 file(APPEND ${usf_release_folder}/usf.hpp "// Copyright (c) ${year} Helder Parracho (hparracho@gmail.com)\n")
 file(APPEND ${usf_release_folder}/usf.hpp "//\n")
 file(APPEND ${usf_release_folder}/usf.hpp "// See README.md file for additional credits and acknowledgments.\n")
