@@ -44,6 +44,9 @@ I also did it for the challenge of making it and it turned out to be more demand
 - Wide character strings support (the foundations are done but it was never used or tested).
 - Better floating point conversion routines (the current ones suck!). Looking at the possibility of adapting [ryu](https://github.com/ulfjack/ryu)'s algorithm.
 
+## Benchmarks
+(*wip*)
+
 ## Usage
 To get started with **usflib** all you need to do is download the [**latest version**](https://raw.githubusercontent.com/hparracho/usflib/master/include/usf/usf.hpp) which is just a single header file and add it to your source files (or add this repository as a git submodule).
 
@@ -103,4 +106,10 @@ template <typename... Args>
 usf::StringSpan usf::format_to(usf::StringSpan str, usf::StringView str_fmt, Args&&... args);
 ```
 ## Syntax
+(*wip*)
+
+## License
+(*wip*)
+
+## Acknowledgments
 (*wip*)
