@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // @file    usf_argument.hpp
 // @brief   Argument format processor class.
-// @date    07 January 2019
+// @date    08 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_ARGUMENT_HPP
@@ -244,7 +244,7 @@ class Argument
                         };
                     };
 
-                    const fp_t fp_value {value};
+                    const fp_t fp_value{{value}};
 
                     if(fp_value.i == 0)
                     {
