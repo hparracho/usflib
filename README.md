@@ -12,7 +12,7 @@ The library is in its very early stages of development and its interface can (in
 ## Motivation
 Damn... yet another formatting library???
 Well, basically I have no sympathy for the (s)(n)printf functions, even less for the cumbersome IOStream's interface.
-I really love the [**\{fmt\}**](http://fmtlib.net) library but it has an hefty price tag when working with targets with only a few Kb of flash and RAM available.
+I really love the [**\{fmt\}**](http://fmtlib.net) library but it has an hefty price tag when working with targets with only a few kB of flash and RAM available.
 This happens mostly because {fmt} has a lot of features (rarely needed in an embedded target) and also because it falls back to printf in some cases (hopefully this is still true in the latest version).
 
 So, based on my love for the {fmt}'s format string syntax (itself similar to the one of [str.format](https://docs.python.org/3.8/library/string.html) in Python), I decided to roll my own version with a nice balance in mind between code size, execution speed and available features that made sense to my main target platforms, small embedded micro-controllers, mostly ARM Cortex-M0/3/4.
@@ -38,7 +38,7 @@ I also did it for the challenge of making it and it turned out to be more demand
 - Complete unit tests.
 - IAR and Arm Compiler 5/6 support.
 - Dynamic width and precision support.
-- std::string replacement with inplace storage.
+- Add a std::string replacement with inplace storage.
 - Add more functions to usf::StringSpan and usf::StringView classes. 
 - Besides formatting, also printing capability with custom output handler, e.g.: Console, UARTs, LCDs, etc...
 - Wide character strings support (the foundations are done but it was never used or tested).
@@ -55,7 +55,7 @@ Assuming you can use the single header file directly: ```#include "usf.hpp"``` -
 #### A minimal example
 ```c++
 #include "usf.hpp"
-...
+/*...*/
 char str[64]{};
 usf::format_to(str, 64, "Hello, {}!", "world");      // str == "Hello, world!"
 usf::format_to(str, 64, "dec:{0} hex:{0:x}", 16);    // str == "dec:16 hex:10"
