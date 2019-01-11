@@ -4,7 +4,7 @@
 //          Intended to replace basic functionality of std::span throughout
 //          the library. It uses a begin / end iterator approach instead of
 //          the standard data pointer and size implementations.
-// @date    07 January 2019
+// @date    11 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_STRING_SPAN_HPP
@@ -69,6 +69,11 @@ class BasicStringSpan
         {
             USF_ENFORCE(first <= last, std::runtime_error);
         }
+
+        template <std::size_t N> USF_CPP14_CONSTEXPR
+        BasicStringSpan(std::array<CharT, N>& array) noexcept
+            : m_begin{array.begin()}, m_end{array.end()}
+        {}
 
         // -------- ASSIGNMENT ------------------------------------------------
 
@@ -165,6 +170,7 @@ class BasicStringSpan
 };
 
 using StringSpan = BasicStringSpan<char>;
+using ByteStringSpan = BasicStringSpan<uint8_t>;
 
 } // namespace usf
 
