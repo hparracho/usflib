@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // @file    usf_main.hpp
 // @brief   Main process functions and public interface.
-// @date    07 January 2019
+// @date    11 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_MAIN_HPP
@@ -146,9 +146,25 @@ StringSpan format_to(StringSpan str, StringView fmt, Args&&... args)
 }
 
 template <typename... Args> USF_CPP14_CONSTEXPR
+ByteStringSpan format_to(ByteStringSpan str, StringView fmt, Args&&... args)
+{
+    static_assert(CHAR_BIT == 8, "usf::format_to(): invalid char size.");
+    char *end = basic_format_to(reinterpret_cast<char*>(str.data()), str.size(), fmt, args...);
+
+    return ByteStringSpan(str.begin(), reinterpret_cast<uint8_t*>(end));
+}
+
+template <typename... Args> USF_CPP14_CONSTEXPR
 char* format_to(char* str, const std::ptrdiff_t str_count, StringView fmt, Args&&... args)
 {
     return basic_format_to(str, str_count, fmt, args...);
+}
+
+template <typename... Args> USF_CPP14_CONSTEXPR
+uint8_t* format_to(uint8_t* str, const std::ptrdiff_t str_count, StringView fmt, Args&&... args)
+{
+    static_assert(CHAR_BIT == 8, "usf::format_to(): invalid char size.");
+    return reinterpret_cast<uint8_t*>(basic_format_to(reinterpret_cast<char*>(str), str_count, fmt, args...));
 }
 
 } // namespace usf
