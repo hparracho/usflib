@@ -1,13 +1,16 @@
 // ----------------------------------------------------------------------------
 // @file    usf_config.hpp
 // @brief   usflib configuration header file.
-// @date    07 January 2019
+// @date    11 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_CONFIG_HPP
 #define USF_CONFIG_HPP
 
+#include <algorithm>
+#include <array>
 #include <cassert>
+#include <climits>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
