@@ -5,7 +5,7 @@
 //          std::char_traits class but is not compatible and cannot be
 //          interchanged. Different interface and different implementation.
 //          Intended for internal use only!
-// @date    07 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_TRAITS_HPP
@@ -28,16 +28,20 @@ class CharTraits
         // PUBLIC STATIC FUNCTIONS
         // --------------------------------------------------------------------
 
-        template <typename CharT> USF_ALWAYS_INLINE static USF_CPP14_CONSTEXPR
-        void assign(CharT*& dst, CharT ch, std::ptrdiff_t count) noexcept
+        template <typename CharDst, typename CharSrc,
+                  typename std::enable_if<std::is_convertible<CharSrc, CharDst>::value, bool>::type = true>
+        USF_ALWAYS_INLINE static USF_CPP14_CONSTEXPR
+        void assign(CharDst*& dst, CharSrc ch, std::ptrdiff_t count) noexcept
         {
-            while((count--) > 0) { *dst++ = ch; }
+            while((count--) > 0) { *dst++ = static_cast<CharDst>(ch); }
         }
 
-        template <typename CharT> USF_ALWAYS_INLINE static USF_CPP14_CONSTEXPR
-        void copy(CharT*& dst, const CharT* src, std::ptrdiff_t count) noexcept
+        template <typename CharDst, typename CharSrc,
+                  typename std::enable_if<std::is_convertible<CharSrc, CharDst>::value, bool>::type = true>
+        USF_ALWAYS_INLINE static USF_CPP14_CONSTEXPR
+        void copy(CharDst*& dst, const CharSrc* src, std::ptrdiff_t count) noexcept
         {
-            while((count--) > 0) { *dst++ = *src++; }
+            while((count--) > 0) { *dst++ = static_cast<CharDst>(*src++); }
         }
 
         template <typename CharT> USF_ALWAYS_INLINE static USF_CPP14_CONSTEXPR

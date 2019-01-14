@@ -4,7 +4,7 @@
 //          Intended to replace basic functionality of std::string_view
 //          throughout the library. It uses a begin / end iterator approach
 //          instead of the standard data pointer and size implementations.
-// @date    07 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_STRING_VIEW_HPP
@@ -159,6 +159,15 @@ class BasicStringView
 };
 
 using StringView = BasicStringView<char>;
+using WStringView = BasicStringView<wchar_t>;
+
+#if defined(USF_CPP20_CHAR8_T_SUPPORT)
+using U8StringView = BasicStringView<char8_t>;
+#endif
+using U16StringView = BasicStringView<char16_t>;
+using U32StringView = BasicStringView<char32_t>;
+
+using ByteStringView = BasicStringView<uint8_t>;
 
 } // namespace usf
 

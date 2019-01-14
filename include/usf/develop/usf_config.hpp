@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // @file    usf_config.hpp
 // @brief   usflib configuration header file.
-// @date    11 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_CONFIG_HPP
@@ -137,6 +137,11 @@ with the -std=c++11 or -std=gnu++11 compiler options.
 #elif USF_CPP14_OR_GREATER && USF_HAS_INCLUDE(<experimental/string_view>)
 #  include <experimental/string_view>
 #  define USF_STD_BASIC_STRING_VIEW  std::experimental::basic_string_view
+#endif
+
+// char8_t support (C++20 only)
+#if defined(__cpp_lib_char8_t) && (__cpp_lib_char8_t >= 201811L)
+#  define USF_CPP20_CHAR8_T_SUPPORT
 #endif
 
 

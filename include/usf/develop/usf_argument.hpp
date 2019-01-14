@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // @file    usf_argument.hpp
 // @brief   Argument format processor class.
-// @date    08 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_ARGUMENT_HPP
@@ -471,8 +471,10 @@ class Argument
             format_string(it, end, format, str.data(), str_length);
         }
 
+        template <typename CharSrc,
+                  typename std::enable_if<std::is_convertible<CharSrc, CharT>::value, bool>::type = true>
         static USF_CPP14_CONSTEXPR void format_string(iterator& it, const_iterator end,
-                                                      const Format& format, const CharT* str,
+                                                      const Format& format, const CharSrc* str,
                                                       const int str_length, const bool negative = false)
         {
             const int fill_after = format.write_alignment(it, end, str_length, negative);
@@ -530,9 +532,17 @@ Argument<CharT> make_argument(const bool arg)
     return arg;
 }
 
-// Character
+// Character (char)
 template <typename CharT> inline USF_CPP14_CONSTEXPR
 Argument<CharT> make_argument(const char arg)
+{
+    return static_cast<CharT>(arg);
+}
+
+// Character (CharT != char)
+template <typename CharT, typename std::enable_if<!std::is_same<CharT, char>::value, bool>::type = true>
+inline USF_CPP14_CONSTEXPR
+Argument<CharT> make_argument(const CharT arg)
 {
     return arg;
 }

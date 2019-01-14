@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // @file    usf_integer.hpp
 // @brief   Integer conversion and helper functions.
-// @date    04 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_INTEGER_HPP
@@ -285,7 +285,7 @@ class Integer
             {
                 const uint32_t v = value;
                 value >>= 4U;
-                *(--dst) = digits[v - (value << 4U)];
+                *(--dst) = static_cast<CharT>(digits[v - (value << 4U)]);
             }while(value);
 
         }
@@ -299,7 +299,7 @@ class Integer
             {
                 const uint64_t v = value;
                 value >>= 4U;
-                *(--dst) = digits[v - (value << 4U)];
+                *(--dst) = static_cast<CharT>(digits[v - (value << 4U)]);
             }
 
             convert_hex(dst, static_cast<uint32_t>(value), uppercase);
