@@ -3,10 +3,10 @@
 // ----------------------------------------------------------------------------
 // @file    usf.hpp
 // @brief   usflib single header auto generated file.
-// @date    08 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 //
-// μSF - Micro String Format 0.1.0 - https://github.com/hparracho/usflib
+// μSF - Micro String Format v0.2.0 - https://github.com/hparracho/usflib
 // Copyright (c) 2019 Helder Parracho (hparracho@gmail.com)
 //
 // See README.md file for additional credits and acknowledgments.
@@ -37,13 +37,16 @@
 // ----------------------------------------------------------------------------
 // @file    usf_config.hpp
 // @brief   usflib configuration header file.
-// @date    07 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_CONFIG_HPP
 #define USF_CONFIG_HPP
 
+#include <algorithm>
+#include <array>
 #include <cassert>
+#include <climits>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
@@ -172,6 +175,11 @@ with the -std=c++11 or -std=gnu++11 compiler options.
 #  define USF_STD_BASIC_STRING_VIEW  std::experimental::basic_string_view
 #endif
 
+// char8_t support (C++20 only)
+#if defined(__cpp_lib_char8_t) && (__cpp_lib_char8_t >= 201811L)
+#  define USF_CPP20_CHAR8_T_SUPPORT
+#endif
+
 
 // ----------------------------------------------------------------------------
 // Target detection (maybe not the best way of doing it...)
@@ -252,7 +260,7 @@ void throw_exception(const char* const msg)
 //          std::char_traits class but is not compatible and cannot be
 //          interchanged. Different interface and different implementation.
 //          Intended for internal use only!
-// @date    07 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_TRAITS_HPP
@@ -275,16 +283,20 @@ class CharTraits
         // PUBLIC STATIC FUNCTIONS
         // --------------------------------------------------------------------
 
-        template <typename CharT> USF_ALWAYS_INLINE static USF_CPP14_CONSTEXPR
-        void assign(CharT*& dst, CharT ch, std::ptrdiff_t count) noexcept
+        template <typename CharDst, typename CharSrc,
+                  typename std::enable_if<std::is_convertible<CharSrc, CharDst>::value, bool>::type = true>
+        USF_ALWAYS_INLINE static USF_CPP14_CONSTEXPR
+        void assign(CharDst*& dst, CharSrc ch, std::ptrdiff_t count) noexcept
         {
-            while((count--) > 0) { *dst++ = ch; }
+            while((count--) > 0) { *dst++ = static_cast<CharDst>(ch); }
         }
 
-        template <typename CharT> USF_ALWAYS_INLINE static USF_CPP14_CONSTEXPR
-        void copy(CharT*& dst, const CharT* src, std::ptrdiff_t count) noexcept
+        template <typename CharDst, typename CharSrc,
+                  typename std::enable_if<std::is_convertible<CharSrc, CharDst>::value, bool>::type = true>
+        USF_ALWAYS_INLINE static USF_CPP14_CONSTEXPR
+        void copy(CharDst*& dst, const CharSrc* src, std::ptrdiff_t count) noexcept
         {
-            while((count--) > 0) { *dst++ = *src++; }
+            while((count--) > 0) { *dst++ = static_cast<CharDst>(*src++); }
         }
 
         template <typename CharT> USF_ALWAYS_INLINE static USF_CPP14_CONSTEXPR
@@ -318,7 +330,7 @@ struct always_false : std::false_type {};
 //          Intended to replace basic functionality of std::span throughout
 //          the library. It uses a begin / end iterator approach instead of
 //          the standard data pointer and size implementations.
-// @date    07 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_STRING_SPAN_HPP
@@ -383,6 +395,11 @@ class BasicStringSpan
         {
             USF_ENFORCE(first <= last, std::runtime_error);
         }
+
+        template <std::size_t N> USF_CPP14_CONSTEXPR
+        BasicStringSpan(std::array<CharT, N>& array) noexcept
+            : m_begin{array.begin()}, m_end{array.end()}
+        {}
 
         // -------- ASSIGNMENT ------------------------------------------------
 
@@ -479,6 +496,15 @@ class BasicStringSpan
 };
 
 using StringSpan = BasicStringSpan<char>;
+using WStringSpan = BasicStringSpan<wchar_t>;
+
+#if defined(USF_CPP20_CHAR8_T_SUPPORT)
+using U8StringSpan = BasicStringSpan<char8_t>;
+#endif
+using U16StringSpan = BasicStringSpan<char16_t>;
+using U32StringSpan = BasicStringSpan<char32_t>;
+
+using ByteStringSpan = BasicStringSpan<uint8_t>;
 
 } // namespace usf
 
@@ -491,7 +517,7 @@ using StringSpan = BasicStringSpan<char>;
 //          Intended to replace basic functionality of std::string_view
 //          throughout the library. It uses a begin / end iterator approach
 //          instead of the standard data pointer and size implementations.
-// @date    07 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_STRING_VIEW_HPP
@@ -646,6 +672,15 @@ class BasicStringView
 };
 
 using StringView = BasicStringView<char>;
+using WStringView = BasicStringView<wchar_t>;
+
+#if defined(USF_CPP20_CHAR8_T_SUPPORT)
+using U8StringView = BasicStringView<char8_t>;
+#endif
+using U16StringView = BasicStringView<char16_t>;
+using U32StringView = BasicStringView<char32_t>;
+
+using ByteStringView = BasicStringView<uint8_t>;
 
 } // namespace usf
 
@@ -655,7 +690,7 @@ using StringView = BasicStringView<char>;
 // ----------------------------------------------------------------------------
 // @file    usf_integer.hpp
 // @brief   Integer conversion and helper functions.
-// @date    04 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_INTEGER_HPP
@@ -939,7 +974,7 @@ class Integer
             {
                 const uint32_t v = value;
                 value >>= 4U;
-                *(--dst) = digits[v - (value << 4U)];
+                *(--dst) = static_cast<CharT>(digits[v - (value << 4U)]);
             }while(value);
 
         }
@@ -953,7 +988,7 @@ class Integer
             {
                 const uint64_t v = value;
                 value >>= 4U;
-                *(--dst) = digits[v - (value << 4U)];
+                *(--dst) = static_cast<CharT>(digits[v - (value << 4U)]);
             }
 
             convert_hex(dst, static_cast<uint32_t>(value), uppercase);
@@ -1747,7 +1782,7 @@ class ArgCustomType
 // ----------------------------------------------------------------------------
 // @file    usf_argument.hpp
 // @brief   Argument format processor class.
-// @date    07 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_ARGUMENT_HPP
@@ -1990,7 +2025,7 @@ class Argument
                         };
                     };
 
-                    const fp_t fp_value {value};
+                    const fp_t fp_value{{value}};
 
                     if(fp_value.i == 0)
                     {
@@ -2217,8 +2252,10 @@ class Argument
             format_string(it, end, format, str.data(), str_length);
         }
 
+        template <typename CharSrc,
+                  typename std::enable_if<std::is_convertible<CharSrc, CharT>::value, bool>::type = true>
         static USF_CPP14_CONSTEXPR void format_string(iterator& it, const_iterator end,
-                                                      const Format& format, const CharT* str,
+                                                      const Format& format, const CharSrc* str,
                                                       const int str_length, const bool negative = false)
         {
             const int fill_after = format.write_alignment(it, end, str_length, negative);
@@ -2276,9 +2313,17 @@ Argument<CharT> make_argument(const bool arg)
     return arg;
 }
 
-// Character
+// Character (char)
 template <typename CharT> inline USF_CPP14_CONSTEXPR
 Argument<CharT> make_argument(const char arg)
+{
+    return static_cast<CharT>(arg);
+}
+
+// Character (CharT != char)
+template <typename CharT, typename std::enable_if<!std::is_same<CharT, char>::value, bool>::type = true>
+inline USF_CPP14_CONSTEXPR
+Argument<CharT> make_argument(const CharT arg)
 {
     return arg;
 }
@@ -2437,7 +2482,7 @@ inline USF_CPP14_CONSTEXPR Argument<CharT> make_argument(const T& arg)
 // ----------------------------------------------------------------------------
 // @file    usf_main.hpp
 // @brief   Main process functions and public interface.
-// @date    07 January 2019
+// @date    14 January 2019
 // ----------------------------------------------------------------------------
 
 #ifndef USF_MAIN_HPP
@@ -2575,6 +2620,9 @@ CharT* basic_format_to(CharT* str, const std::ptrdiff_t str_count, BasicStringVi
 
 
 
+// ----------------------------------------------------------------------------
+// Formats a char string 
+// ---------------------------------------------------------------------------
 template <typename... Args> USF_CPP14_CONSTEXPR
 StringSpan format_to(StringSpan str, StringView fmt, Args&&... args)
 {
@@ -2585,6 +2633,87 @@ template <typename... Args> USF_CPP14_CONSTEXPR
 char* format_to(char* str, const std::ptrdiff_t str_count, StringView fmt, Args&&... args)
 {
     return basic_format_to(str, str_count, fmt, args...);
+}
+
+// ----------------------------------------------------------------------------
+// Formats a wchar_t string 
+// ---------------------------------------------------------------------------
+template <typename... Args> USF_CPP14_CONSTEXPR
+WStringSpan format_to(WStringSpan str, WStringView fmt, Args&&... args)
+{
+    return basic_format_to(str, fmt, args...);
+}
+
+template <typename... Args> USF_CPP14_CONSTEXPR
+wchar_t* format_to(wchar_t* str, const std::ptrdiff_t str_count, WStringView fmt, Args&&... args)
+{
+    return basic_format_to(str, str_count, fmt, args...);
+}
+
+// ----------------------------------------------------------------------------
+// Formats a char8_t string 
+// ---------------------------------------------------------------------------
+#if defined(USF_CPP20_CHAR8_T_SUPPORT)
+template <typename... Args> USF_CPP14_CONSTEXPR
+U8StringSpan format_to(U8StringSpan str, U8StringView fmt, Args&&... args)
+{
+    return basic_format_to(str, fmt, args...);
+}
+
+template <typename... Args> USF_CPP14_CONSTEXPR
+char8_t* format_to(char8_t* str, const std::ptrdiff_t str_count, U8StringView fmt, Args&&... args)
+{
+    return basic_format_to(str, str_count, fmt, args...);
+}
+#endif // defined(USF_CPP20_CHAR8_T_SUPPORT)
+
+// ----------------------------------------------------------------------------
+// Formats a char16_t string 
+// ---------------------------------------------------------------------------
+template <typename... Args> USF_CPP14_CONSTEXPR
+U16StringSpan format_to(U16StringSpan str, U16StringView fmt, Args&&... args)
+{
+    return basic_format_to(str, fmt, args...);
+}
+
+template <typename... Args> USF_CPP14_CONSTEXPR
+char16_t* format_to(char16_t* str, const std::ptrdiff_t str_count, U16StringView fmt, Args&&... args)
+{
+    return basic_format_to(str, str_count, fmt, args...);
+}
+
+// ----------------------------------------------------------------------------
+// Formats a char32_t string 
+// ---------------------------------------------------------------------------
+template <typename... Args> USF_CPP14_CONSTEXPR
+U32StringSpan format_to(U32StringSpan str, U32StringView fmt, Args&&... args)
+{
+    return basic_format_to(str, fmt, args...);
+}
+
+template <typename... Args> USF_CPP14_CONSTEXPR
+char32_t* format_to(char32_t* str, const std::ptrdiff_t str_count, U32StringView fmt, Args&&... args)
+{
+    return basic_format_to(str, str_count, fmt, args...);
+}
+
+// ----------------------------------------------------------------------------
+// Formats a byte string as char string 
+// ----------------------------------------------------------------------------
+template <typename... Args> USF_CPP14_CONSTEXPR
+ByteStringSpan format_to(ByteStringSpan str, StringView fmt, Args&&... args)
+{
+    static_assert(CHAR_BIT == 8, "usf::format_to(): invalid char size.");
+    char *end = basic_format_to(reinterpret_cast<char*>(str.data()), str.size(), fmt, args...);
+
+    return ByteStringSpan(str.begin(), reinterpret_cast<uint8_t*>(end));
+}
+
+template <typename... Args> USF_CPP14_CONSTEXPR
+uint8_t* format_to(uint8_t* str, const std::ptrdiff_t str_count, StringView fmt, Args&&... args)
+{
+    static_assert(CHAR_BIT == 8, "usf::format_to(): invalid char size.");
+    return reinterpret_cast<uint8_t*>(basic_format_to(reinterpret_cast<char*>(str), str_count, fmt, args...));
 }
 
 } // namespace usf

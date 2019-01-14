@@ -2,7 +2,7 @@
 [![Standard](https://img.shields.io/badge/c%2B%2B-11/14/17-blue.svg)](https://isocpp.org/std/the-standard)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Download](https://img.shields.io/badge/download%20%20-latest-blue.svg)](https://raw.githubusercontent.com/hparracho/usflib/master/include/usf/usf.hpp)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](https://github.com/hparracho/usflib/releases)
+[![Version](https://img.shields.io/badge/version-0.2.0-brightgreen.svg)](https://github.com/hparracho/usflib/releases)
 [![Build Status](https://travis-ci.org/hparracho/usflib.svg?branch=master)](https://travis-ci.org/hparracho/usflib)
 
 μSF is a lean C++ string format library (mainly) for embedded platforms.
